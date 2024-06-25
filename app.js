@@ -1,16 +1,16 @@
-const express = require('express');
-
-const app = express()
-const PORT = 8000
+const app = require('express')();
+const { v4 } = require('uuid');
 
 app.get('/', (req, res) => {
-  res.send('Hello World')
-})
+  const path = `/item/${v4()}`;
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+  res.end(`<p>Hello! Go to item: <a href="${path}">${path}</a></p>`);
+});
 
-app.get('/about', (req, res) => {
-  res.send('About route 🎉 ')
-})
+app.get('/item/:slug', (req, res) => {
+  const { slug } = req.params;
+  res.end(`<p>Item: ${slug}</p><a href="/">Go back</a>`);
+});
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
-})
+module.exports = app;
